@@ -1,6 +1,7 @@
 const path = require("path");
 const express = require("express");
 const fs = require("fs");
+const notesData = require('./db/db.json');
 
 const app = express();
 const PORT = 3000;
@@ -46,11 +47,12 @@ app.post('/api/notes', (req, res) => {
     notesData = fs.readFileSync("./db/db.json", "utf8");
     notesData = JSON.parse(notesData);
     fs.writeFile("./db/db.json", notesData, "utf8", function(err) {
-
         if (!err) {
             debugger;
-        } else
-            throw err;
+        } else {
+            console.log(err);
+        }
+        throw err;
     });
 
     res.json(JSON.parse(notesData));
@@ -65,7 +67,7 @@ app.delete('/api/notes/:id', (req, res) => {
     let savedNotes = JSON.parse(fs.readFileSync("./db/db.json", "utf8"));
     let noteId = req.params.id;
     let newId = 0;
-    console.log(`Deleting note with ID ${noteId}`);
+    console.log(`Deleting note ${noteId}`);
     savedNotes = savedNotes.filter(currNote => {
         return currNote.id != noteID;
     })
