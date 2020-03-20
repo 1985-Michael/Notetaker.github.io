@@ -67,24 +67,24 @@ app.delete('/api/notes/:id', (req, res) => {
     notesData.splice(notesData.indexOf(note), 1);
 
 
-    let savedNotes;
-    savedNotes = JSON.parse(fs.readFileSync("./Develop/db/db.json", "utf8"));
+    let savedNoteData;
+    savedNoteData = JSON.parse(fs.readFileSync("./Develop/db/db.json", "utf8"));
     let noteId = req.params.id;
     let newId;
     newId = 0;
-    console.log(`Deleting note ${noteId}`);
-    res.end("deleted the Note");
-    savedNotes = savedNotes.filter(currNote => {
-        return currNote.id != noteID;
+    console.log(`Deleting Note ${noteId}`);
+    res.end("Deleted The Note");
+    savedNoteData = savedNoteData.filter(currentNote => {
+        return currentNote.id != noteID;
     })
 
-    for (currNote of savedNotes) {
-        currNote.id = newId.toString();
+    for (currentNote of savedNoteData) {
+        currentNote.id = newId.toString();
         newID++;
     }
 
-    fs.writeFileSync("./Develop/db/db.json", JSON.stringify(savedNotes));
-    res.json(savedNotes);
+    fs.writeFileSync("./Develop/db/db.json", JSON.stringify(savedNoteData));
+    res.json(savedNoteData);
 });
 
 app.listen(PORT, () =>
