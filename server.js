@@ -1,12 +1,12 @@
 const path = require("path");
 const express = require("express");
 const fs = require("fs");
-const notesData = require("./db/db.json");
+
 
 const app = express();
 const PORT = 3000;
 
-const Directory = path.join(__dirname, "Develop/public");
+const Directory = path.join(__dirname, "public");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -14,42 +14,42 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static("/"));
 
 
-app.get("api/notes", function(req, res) {
-    res.sendFile(path.join(Directory, "notes.html"));
-
+app.get("/notes", function(req, res) {
+    res.sendFile(path.join(Directory, "./notes.html"));
 });
 
 app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "./public/index.html"));
+    res.sendFile(path.join(Directory, "./index.html"));
 });
 
 app.get("api/notes", (req, res) => {
-    res.sendFile(path.join(__dirname, "./public/notes.html"));
+    res.sendFile(path.join(__dirname, "./notes.html"));
 });
 
 app.get("/api/notes", (req, res) => {
-    res.json(notesData);
-    notesData = fs.readFileSync("./Develop/db/db.json", "utf8");
+    let notesData = fs.readFileSync("./Develop/db/db.json", "utf8");
     notesData = JSON.parse(notesData);
+    res.json(notesData);
     if (!err) {
         debugger;
     } else {
         console.log(err);
-
     }
 
-    res.json(notesData);
 });
 
 app.post("/api/notes", (req, res) => {
-    const lastIdNum = notesData.length ? Math.max(...(notesData.map(note => note.id))) : 0;
+
+    let notesData = fs.readFileSync("./Develop/db/db.json", "utf8");
+    notesData = JSON.parse(notesData);
+    const lastIdNum = notesData[0].id;
     let id;
     id = lastIdNum + 1;
     notesData.push({ id, ...req.body });
     res.json(notesData.slice(-1));
     notesData = fs.readFileSync("./Develop/db/db.json", "utf8");
     notesData = JSON.parse(notesData);
-    fs.writeFile("./Develop/db/db.json", notesData, "utf8", function(err) {
+    fs.writeFile("./Develop/db/db.json", JSON.stringify(notesData), "utf8", function(err) {
         if (!err) {
             debugger;
         } else {
@@ -62,10 +62,11 @@ app.post("/api/notes", (req, res) => {
 });
 
 app.delete("/api/notes/:id", (req, res) => {
+    let notesData = fs.readFileSync("./Develop/db/db.json", "utf8");
+
     let note;
     note = notesData.find(({ id }) => id === JSON.parse(req.params.id));
     notesData.splice(notesData.indexOf(note), 1);
-
 
     let savedNoteData;
     savedNoteData = JSON.parse(fs.readFileSync("./Develop/db/db.json", "utf8"));
