@@ -2,9 +2,6 @@ const path = require("path");
 const express = require("express");
 const fs = require("fs");
 
-require("./routes/apiRoutes")(app);
-require("./routes/htmlRoutes")(app);
-
 const app = express();
 const PORT = 3000;
 
@@ -13,8 +10,6 @@ const Directory = path.join(__dirname, "/public");
 app.use(express.json());
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
-app.use("/api", apiRoutes);
-app.use("/", htmlRoutes);
 
 app.get("/notes", function(req, res) {
     res.sendFile(path.join(Directory, "notes.html"));
@@ -31,7 +26,7 @@ app.get('/notes', (req, res) => {
 
 app.get('/api/notes', (req, res) => {
     res.json(notesData);
-    notesData = fs.readFileSync("Develop/db/db.json", "utf8");
+    notesData = fs.readFileSync("./db/db.json", "utf8");
     notesData = JSON.parse(notesData);
     if (!err) {
         debugger;
