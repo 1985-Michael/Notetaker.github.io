@@ -1,7 +1,7 @@
 const path = require("path");
 const express = require("express");
 const fs = require("fs");
-const notesData = require('./db/db.json');
+const notesData = require("./db/db.json");
 
 const app = express();
 const PORT = 3000;
@@ -10,8 +10,8 @@ const Directory = path.join(__dirname, "Develop/public");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static('./'));
+app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static("/"));
 
 
 app.get("api/notes", function(req, res) {
@@ -19,15 +19,15 @@ app.get("api/notes", function(req, res) {
 
 });
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, './public/index.html'));
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "./public/index.html"));
 });
 
-app.get('api/notes', (req, res) => {
-    res.sendFile(path.join(__dirname, './public/notes.html'));
+app.get("api/notes", (req, res) => {
+    res.sendFile(path.join(__dirname, "./public/notes.html"));
 });
 
-app.get('/api/notes', (req, res) => {
+app.get("/api/notes", (req, res) => {
     res.json(notesData);
     notesData = fs.readFileSync("./Develop/db/db.json", "utf8");
     notesData = JSON.parse(notesData);
@@ -41,7 +41,7 @@ app.get('/api/notes', (req, res) => {
     res.json(notesData);
 });
 
-app.post('/api/notes', (req, res) => {
+app.post("/api/notes", (req, res) => {
     const lastIdNum = notesData.length ? Math.max(...(notesData.map(note => note.id))) : 0;
     let id;
     id = lastIdNum + 1;
@@ -61,7 +61,7 @@ app.post('/api/notes', (req, res) => {
     res.json(JSON.parse(notesData));
 });
 
-app.delete('/api/notes/:id', (req, res) => {
+app.delete("/api/notes/:id", (req, res) => {
     let note;
     note = notesData.find(({ id }) => id === JSON.parse(req.params.id));
     notesData.splice(notesData.indexOf(note), 1);
@@ -75,7 +75,7 @@ app.delete('/api/notes/:id', (req, res) => {
     console.log(`Deleting Note ${noteId}`);
     res.end("Deleted The Note");
     savedNoteData = savedNoteData.filter(currentNote => {
-        return currentNote.id != noteID;
+        return currentNote.id != noteId;
     })
 
     for (currentNote of savedNoteData) {
