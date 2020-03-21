@@ -23,70 +23,57 @@ app.get("*", (req, res) => {
 });
 
 app.get("api/notes", (req, res) => {
-    res.sendFile(path.join(__dirname, "./notes.html"));
+    res.json(JSON.parse(fs.readFileSync("./Develop/db/db.json")));
 });
 
 app.get("/api/notes", (req, res) => {
-    let notesData = fs.readFileSync("./Develop/db/db.json", "utf8");
-    notesData = JSON.parse(notesData);
-    res.json(notesData);
+    const notes = fs.readFileSync("./Develop/db/db.json", "utf8");
+    const notesdata = JSON.parse(fs.readFileSync("./Develop/db/db.json"));
+    for (let i = 0; i < notesdata.length; i++) {
+        const note = notesdata[i];
+        if (note.id == req.params.id) {
+            res.json(note);
+        }
+    }
+});
+
+
+app.post("/api/notes", (req, res) => {
+    const data = req.body;
+    const notes = JSON.parse(fs.readFileSync("./Develop/db/db.json"));
+    data.id = notes.length ? notes[notes.length - 1].id + 1 : 1;
+    notes.push(data);
+    fs.writeFileSync("./Develop/db/db.json", JSON.stringify(notes));
+    res.end;
+})
+
+notes = fs.readFileSync("./Develop/db/db.json", "utf8");
+fs.writeFile("./Develop/db/db.json", JSON.stringify(notes), "utf8", function(err) {
     if (!err) {
         debugger;
     } else {
         console.log(err);
+
     }
-
-});
-
-app.post("/api/notes", (req, res) => {
-
-    let notesData = fs.readFileSync("./Develop/db/db.json", "utf8");
-    notesData = JSON.parse(notesData);
-    const lastIdNum = notesData[0].id;
-    let id;
-    id = lastIdNum + 1;
-    notesData.push({ id, ...req.body });
-    res.json(notesData.slice(-1));
-    notesData = fs.readFileSync("./Develop/db/db.json", "utf8");
-    notesData = JSON.parse(notesData);
-    fs.writeFile("./Develop/db/db.json", JSON.stringify(notesData), "utf8", function(err) {
-        if (!err) {
-            debugger;
-        } else {
-            console.log(err);
-        }
-        throw err;
-    });
-
-    res.json(JSON.parse(notesData));
 });
 
 app.delete("/api/notes/:id", (req, res) => {
-    let notesData = fs.readFileSync("./Develop/db/db.json", "utf8");
 
-    let note;
-    note = notesData.find(({ id }) => id === JSON.parse(req.params.id));
-    notesData.splice(notesData.indexOf(note), 1);
-
-    let savedNoteData;
-    savedNoteData = JSON.parse(fs.readFileSync("./Develop/db/db.json", "utf8"));
-    let noteId = req.params.id;
-    let newId;
-    newId = 0;
-    console.log(`Deleting Note ${noteId}`);
-    res.end("Deleted The Note");
-    savedNoteData = savedNoteData.filter(currentNote => {
-        return currentNote.id != noteId;
-    })
-
-    for (currentNote of savedNoteData) {
-        currentNote.id = newId.toString();
-        newID++;
+    const notes = JSON.parse(fs.readFileSync("./Develop/db/db.json"));
+    for (let i = 0; i < notes.length; i++) {
+        const note = notes[i];
+        if (note.id == req.params.id) {
+            notes.splice(i, 1);
+        }
     }
-
-    fs.writeFileSync("./Develop/db/db.json", JSON.stringify(savedNoteData));
-    res.json(savedNoteData);
+    fs.writeFileSync("./Develop/db/db.json", JSON.stringify(notes));
+    res.end
 });
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(publicDirectory, "./index.html"));
+});
+
 
 app.listen(PORT, () =>
     console.log(`listening on port ${PORT}`));
