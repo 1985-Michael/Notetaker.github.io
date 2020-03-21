@@ -27,7 +27,6 @@ app.get("api/notes", (req, res) => {
 });
 
 app.get("/api/notes", (req, res) => {
-    const notes = fs.readFileSync("./Develop/db/db.json", "utf8");
     const notesdata = JSON.parse(fs.readFileSync("./Develop/db/db.json"));
     for (let i = 0; i < notesdata.length; i++) {
         const note = notesdata[i];
@@ -58,7 +57,6 @@ fs.writeFile("./Develop/db/db.json", JSON.stringify(notes), "utf8", function(err
 });
 
 app.delete("/api/notes/:id", (req, res) => {
-
     const notes = JSON.parse(fs.readFileSync("./Develop/db/db.json"));
     for (let i = 0; i < notes.length; i++) {
         const note = notes[i];
@@ -69,11 +67,6 @@ app.delete("/api/notes/:id", (req, res) => {
     fs.writeFileSync("./Develop/db/db.json", JSON.stringify(notes));
     res.end
 });
-
-app.get("*", (req, res) => {
-    res.sendFile(path.join(publicDirectory, "./index.html"));
-});
-
 
 app.listen(PORT, () =>
     console.log(`listening on port ${PORT}`));
