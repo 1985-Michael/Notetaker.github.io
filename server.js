@@ -27,22 +27,18 @@ app.get("api/notes", (req, res) => {
 });
 
 app.get("/api/notes", (req, res) => {
-    fs.writeFileSync("./Develop/db/db.json", JSON.stringify(createdNotes));
+    fs.writeFileSync("./Develop/db/db.json", JSON.stringify(savedNoteData));
     console.log("Note saved to db.json File as: ", newNote);
-    res.json(createdNotes);
+    res.json(savedNoteData);
     const notesdata = JSON.parse(fs.readFileSync("./Develop/db/db.json"));
     for (let i = 0; i < notesdata.length; i++) {
         const note = notesdata[i];
         if (note.id == req.params.id) {
             res.json(note);
 
-
         }
     }
 });
-
-
-
 
 app.post("/api/notes", (req, res) => {
     const data = req.body;
@@ -82,29 +78,24 @@ for (let i = 0; i < notes.length; i++) {
         notes.splice(i, 1);
     }
 
-    const createdNotes = JSON.parse(fs.readFileSync("./Develop/db/db.json", "utf8")); {
+    const savedNoteData = JSON.parse(fs.readFileSync("./Develop/db/db.json", "utf8")); {
         let noteID = req.params.id;
-        let newID = 0;
+        let newID;
+        newID = 0;
         console.log(`ID ${noteID} has been deleted`);
-        createdNotes = createdNotes.filter(currentNote => {
+        savedNoteData = savedNoteData.filter(currentNote => {
             return currentNote.id != noteID; {}
 
         });
-
     }
-    for (currentNote of createdNotes) {
+    for (currentNote of savedNoteData) {
         currentNote.id = newID.toString();
         newID++;
 
 
-        fs.writeFileSync("./Develop/db/db.json", JSON.stringify(createdNotes));
-        res.json(createdNotes);
-
+        fs.writeFileSync("./Develop/db/db.json", JSON.stringify(savedNoteData));
+        res.json(savedNoteData);
     }
 }
-module.exports = function(app) {
-
-}
-
 app.listen(PORT, () =>
     console.log(`listening on port ${PORT}`));
